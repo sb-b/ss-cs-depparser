@@ -1,8 +1,7 @@
 # Semi-Supervised CS Dependency Parser
 
-This page includes source codes and trained models of the semi-supervised deep dependency parser described in this paper. The parser employs a semi-supervised learning approach ["DCST"](https://rotmanguy.github.io/publications/2019-10-01-deep-contextualized-self-learning) and utilizes auxiliary tasks for dependency parsing of code-switched (CS) language pairs. 
+This page includes source codes and trained models of the semi-supervised deep dependency parser described in this paper. The parser employs a semi-supervised learning approach ["DCST"](https://rotmanguy.github.io/publications/2019-10-01-deep-contextualized-self-learning) and utilizes auxiliary tasks for dependency parsing of code-switched (CS) language pairs. There are two versions of the parsing model, one is LSTM-based and the other is XLM-R-based. The following sections explain how to run these models.
 
-## Installation
 
 ### Requirements
 
@@ -14,13 +13,12 @@ Run the following:
 
 * Navigate to the DCST folder
 
-* Download CS UD Treebanks ["Frisian-Dutch FAME"](https://universaldependencies.org/treebanks/qfn_fame/index.html), ["Hindi-English HIENCS"](https://universaldependencies.org/treebanks/qhe_hiencs/index.html) ["Komi-Zyrian IKDP"](https://universaldependencies.org/treebanks/kpv_ikdp/index.html), and ["Turkish-German SAGT"](https://universaldependencies.org/treebanks/qtd_sagt/index.html) from https://universaldependencies.org and locate them under *data/datasets/*
+* Download CS UD Treebanks ["Frisian-Dutch FAME"](https://universaldependencies.org/treebanks/qfn_fame/index.html), ["Hindi-English HIENCS"](https://universaldependencies.org/treebanks/qhe_hiencs/index.html) ["Komi-Zyrian IKDP"](https://universaldependencies.org/treebanks/kpv_ikdp/index.html), and ["Turkish-German SAGT"](https://universaldependencies.org/treebanks/qtd_sagt/index.html) from https://universaldependencies.org and locate them under **data/datasets**
 
-* Download the unlabeled data to be used, convert them to ["CoNLL-U format"](https://universaldependencies.org/format.html) and locate them under *data/datasets/*
-
+* Download the unlabeled data to be used, convert them to ["CoNLL-U format"](https://universaldependencies.org/format.html) and locate them under **data/datasets**
 * Run the script:
 
-   - python utils/io_/convert_ud_to_onto_format.py --ud_data_path data/datasets
+    python utils/io_/convert_ud_to_onto_format.py --ud_data_path data/datasets
 
 ### Word Embeddings
 
@@ -30,20 +28,16 @@ The LSTM-based models need pretrained word embeddings.
 
    - In the paper, I used Dutch embeddings for Frisian-Dutch language pair, Hindi embeddings for Hindi-English, Russian embeddings for Komi-Zyrian, and Turkish embeddings for Turkish-German.
 
-* Unzip and locate them under *data/multilingual_word_embeddings/* folder
+* Unzip and locate them under **data/multilingual_word_embeddings** folder
 
 --------------
---------------
 
-## How-To-Run... 
-...the models presented in our paper:
-
-### 1- DCST original (LSTM-based):
+## How-To-Run the LSTM-based Parser
 
 Let's say we want to train the LSTM-based model with auxiliary task enhancements for the Turkish-German SAGT Treebank (qtd_sagt). As the unlabeled data, we use ["TuGeBiC"](https://github.com/ozlemcek/TuGeBiC) (qtd_trde90).
 
 ##### 1.1- Train the baseline parser:
-    - python examples/GraphParser.py --dataset ud --domain qtd_sagt --rnn_mode LSTM --num_epochs 150 --batch_size 16 --hidden_size 512 --arc_space 512 --arc_tag_space 128 --num_layers 3 --num_filters 100 --use_char --use_pos --word_dim 300 --char_dim 100 --pos_dim 100 --initializer xavier --opt adam --learning_rate 0.002 --decay_rate 0.5 --schedule 6 --clip 5.0 --gamma 0.0 --epsilon 1e-6 --p_rnn 0.33 0.33 --p_in 0.33 --p_out 0.33 --arc_decode mst --unk_replace 0.5 --punct_set '.' '``'  ':' ','  --word_embedding fasttext --word_path "data/multilingual_word_embeddings/cc.tr.300.vec" --char_embedding random --model_path saved_models/ud_parser_qtd_sagt_full_train
+    python examples/GraphParser.py --dataset ud --domain qtd_sagt --rnn_mode LSTM --num_epochs 150 --batch_size 16 --hidden_size 512 --arc_space 512 --arc_tag_space 128 --num_layers 3 --num_filters 100 --use_char --use_pos --word_dim 300 --char_dim 100 --pos_dim 100 --initializer xavier --opt adam --learning_rate 0.002 --decay_rate 0.5 --schedule 6 --clip 5.0 --gamma 0.0 --epsilon 1e-6 --p_rnn 0.33 0.33 --p_in 0.33 --p_out 0.33 --arc_decode mst --unk_replace 0.5 --punct_set '.' '``'  ':' ','  --word_embedding fasttext --word_path "data/multilingual_word_embeddings/cc.tr.300.vec" --char_embedding random --model_path saved_models/ud_parser_qtd_sagt_full_train
 
 ##### 1.2- Parse the unlabeled data:
     - python examples/GraphParser.py --dataset ud --domain qtd_trde90 --rnn_mode LSTM --num_epochs 150 --batch_size 16 --hidden_size 512 --arc_space 512 --arc_tag_space 128 --num_layers 3 --num_filters 100 --use_char --use_pos --word_dim 300 --char_dim 100 --pos_dim 100 --initializer xavier --opt adam --learning_rate 0.002 --decay_rate 0.5 --schedule 6 --clip 5.0 --gamma 0.0 --epsilon 1e-6 --p_rnn 0.33 0.33 --p_in 0.33 --p_out 0.33 --arc_decode mst --unk_replace 0.5 --punct_set '.' '``'  ':' ','  --word_embedding fasttext --word_path "data/multilingual_word_embeddings/cc.tr.300.vec" --char_embedding random --model_path saved_models/ud_parser_qtd_sagt_full_train --eval_mode --strict --load_path saved_models/ud_parser_qtd_sagt_full_train/domain_qtd_sagt.pt
