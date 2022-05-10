@@ -1,4 +1,4 @@
-name: depparse_grau
+name: ss_cs_depparse
 channels:
   - defaults
 dependencies:
