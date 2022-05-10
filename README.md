@@ -1,7 +1,8 @@
 # Semi-Supervised CS Dependency Parser
 
-This page includes source codes and trained models of the semi-supervised deep dependency parser described in this paper. The parser employs a semi-supervised learning approach ["DCST"](https://rotmanguy.github.io/publications/2019-10-01-deep-contextualized-self-learning) and utilizes auxiliary tasks for dependency parsing of code-switched (CS) language pairs. There are two versions of the parsing model, one is LSTM-based and the other is XLM-R-based. The following sections explain how to run these models.
+This page includes source codes and trained models of the semi-supervised deep dependency parser described in our paper named ["Improving Code-Switching Dependency Parsing with Semi-Supervised Auxiliary Tasks"](https://2022.naacl.org/program/accepted_papers/#findings). The parser employs a semi-supervised learning approach ["DCST"](https://rotmanguy.github.io/publications/2019-10-01-deep-contextualized-self-learning) and utilizes auxiliary tasks for dependency parsing of code-switched (CS) language pairs. There are two versions of the parsing model, one is LSTM-based and the other is XLM-R-based. The following sections explain how to run these models.
 
+## How-To-Run the LSTM-based Parser
 
 ### Requirements
 
@@ -11,7 +12,7 @@ Run the following:
     
 ### Datasets
 
-* Navigate to the DCST folder
+* Navigate to the **LSMT-based/DCST** folder
 
 * Download CS UD Treebanks ["Frisian-Dutch FAME"](https://universaldependencies.org/treebanks/qfn_fame/index.html), ["Hindi-English HIENCS"](https://universaldependencies.org/treebanks/qhe_hiencs/index.html) ["Komi-Zyrian IKDP"](https://universaldependencies.org/treebanks/kpv_ikdp/index.html), and ["Turkish-German SAGT"](https://universaldependencies.org/treebanks/qtd_sagt/index.html) from https://universaldependencies.org and locate them under **data/datasets**
 
@@ -32,9 +33,13 @@ The LSTM-based models need pretrained word embeddings.
 
 --------------
 
-## How-To-Run the LSTM-based Parser
-
 Let's say we want to train the LSTM-based model with auxiliary task enhancements for the Turkish-German SAGT Treebank (qtd_sagt). As the unlabeled data, we use ["TuGeBiC"](https://github.com/ozlemcek/TuGeBiC) (qtd_trde90).
+
+   - Download the corpus, join all conll-u files and divide them to train and dev files. Name the training as "qtd_trde90-ud-train.conllu" and dev as "qtd_trde90-ud-dev.conllu". Locate these files under the folder **data/datasets/UD_QTD-TRDE90/**
+
+* Run the script:
+
+    python utils/io_/convert_ud_to_onto_format.py --ud_data_path data/datasets
 
 ##### 1.1- Train the baseline parser:
     python examples/GraphParser.py --dataset ud --domain qtd_sagt --rnn_mode LSTM --num_epochs 150 --batch_size 16 --hidden_size 512 --arc_space 512 --arc_tag_space 128 --num_layers 3 --num_filters 100 --use_char --use_pos --word_dim 300 --char_dim 100 --pos_dim 100 --initializer xavier --opt adam --learning_rate 0.002 --decay_rate 0.5 --schedule 6 --clip 5.0 --gamma 0.0 --epsilon 1e-6 --p_rnn 0.33 0.33 --p_in 0.33 --p_out 0.33 --arc_decode mst --unk_replace 0.5 --punct_set '.' '``'  ':' ','  --word_embedding fasttext --word_path "data/multilingual_word_embeddings/cc.tr.300.vec" --char_embedding random --model_path saved_models/ud_parser_qtd_sagt_full_train
@@ -79,134 +84,51 @@ If you want to join only one seq_labeler model (e.g., only +NOC model), set --nu
 ****************************************************************
 ----------------------------------------------------------------
 
-### 2- XLM-R-based DCST (using STEPS):
+## ## How-To-Run the XLM-R-based Parser:
 
-#### Prerequisites:
+### Requirements
 
-This model does not run on steppenweihe. So, we run the models on grauweihe.
+Create a conda environment using the environment.yml file:
 
-First, activate the conda environment:
-
-##### On Grauweihe server:
-
-    - conda activate depparse_grau
-
---------------
-#### Example runs shown for KPV_ZYRIAN:
-
-
-- used datasets: 
-    - labeled_data: /mount/projekte/codeswitch/betul/DCST/data/datasets/UD_Komi-Zyrian
-    - unlabeled_data /mount/projekte/codeswitch/betul/DCST/data/datasets/UD_Komi-Social
-
-Let's say we want to train the +SMH model for Kpv-Ru CS pair.
-
-##### 2.1- Train the baseline parser:
-
-    - cd /mount/projekte/codeswitch/betul/steps_parser_2/steps_parser/
-
-    - python src/train.py ../deps_only_kpv-2-8.json
-
-##### 2.2- Parse the unlabeled data:
-
-Step 1- Open 'train.py' in /mount/projekte/codeswitch/betul/steps_parser_2/steps_parser/src/
-
-Step 2- Comment out line 33 like this:
-
-    - # trainer.train()
-
-Step 3- Comment out line 48 like this:
-
-    - # checkpoint_path = Path(trainer.checkpoint_dir) / "model_best.pth"
-
-Step 4- Delete '#' char at the beginning of line 47 and provide the trained baseline model path. e.g.:
-
-    - checkpoint_path = "/mount/projekte18/codeswitch/betul/steps_parser_2/trained_models/KPV_Zyrian-2.8_baseline/baseline_only_deps_batchsize_16_es_200/1130_142937/model_best.pth"
-
-
-Step 5- Open 'deps_only_kpv-2-8.json' in /mount/projekte/codeswitch/betul/steps_parser_2/
-
-Step 6- Provide the path of the unlabeled data in line 94. E.g.:
-
-    - "test": "/mount/projekte18/codeswitch/betul/DCST/data/datasets/UD_Komi-Social/kpv_social-ud-train.conllu"
-
-- The newly created file 'test-parsed.conllu' file under /mount/projekte/codeswitch/betul/steps_parser_2/steps_parser/ is the automatically parsed version of 'kpv_social-ud-train.conllu'
-
-- Do this again for dev and test parts of the unlabeled data. (The treebank in /mount/projekte18/codeswitch/betul/DCST/data/datasets/UD_Komi-Social/ is already the automatically parsed version. I just wanted to show this process for a new data).
-
-Step 7- Undo steps 2, 3, and 4.
-
-##### 2.3- Train sequence labelers:
-
-###### Simplified Morphology of Head Task:
-
-Step 1- Navigate to /mount/projekte/codeswitch/betul/all_purpose_scripts/steps_gating/
-
-    - python dcst_simplified_morp_features_of_head.py /mount/projekte18/codeswitch/betul/DCST/data/datasets/UD_Komi-Social/kpv_social-ud-train.conllu kpv_social-ud-train-parsedbysteps-smh.conllu
-
-    - python dcst_simplified_morp_features_of_head.py /mount/projekte18/codeswitch/betul/DCST/data/datasets/UD_Komi-Social/kpv_social-ud-dev.conllu kpv_social-ud-dev-parsedbysteps-smh.conllu
-
-    - python dcst_simplified_morp_features_of_head.py /mount/projekte18/codeswitch/betul/DCST/data/datasets/UD_Komi-Social/kpv_social-ud-test.conllu kpv_social-ud-test-parsedbysteps-smh.conllu
-
-(These preprocessed files are already exist in /mount/projekte/codeswitch/betul/all_purpose_scripts/steps_gating/)
-
-*For experimenting with other tasks:*
-
-  - Use:
+   - conda env create -f  XLM-R-based/auxiliary-task-train/steps_parser/environment.yml 
   
-     - dcst_num_of_children.py for (+NOC),
-     - dcst_distance_to_root.py for (+DTR),
-     - dcst_relative_pos_tag.py for (+RPE),
-     - dcst_simplified_head_lang_id.py for (+HLI),
-     - dcst_count_punct.py for (+PC),
-     
-    instead of dcst_simplified_morp_features_of_head.py
+Activate the environment:
 
-Step 2- Open 'init_config.py' in /mount/projekte/codeswitch/betul/steps_parser_2/steps_parser/src/
-
-Step 3- Replace line 126 
-
-    - post_processors =  self._init_post_processors(model_args["post_processors"], model_outputs))
+   - conda activate ss_cs_depparse
     
     
-   with:
+### Pretrained Language Model
+
+Download XLM-R base model from [Hugging Face](https://huggingface.co/xlm-roberta-base/tree/main) and locate it under 
+**XLM-R-based/dcst-parser-train/pretrained_model/**.
+
+
+### Datasets
+
+- For labeled data, we use the QTD_SAGT dataset from [Universal Dependencies](https://github.com/UniversalDependencies): 
+    - Download QTD_SAGT treebank and locate it under **LSTM-based/DCST/data/datasets/**
+- For unlabeled data, we use ["TuGeBiC"](https://github.com/ozlemcek/TuGeBiC). 
+    - Download the corpus, join all conll-u files and divide them to train and dev files. Name the training as "qtd_trde90-ud-train_autoparsed.conllu" and dev as "qtd_trde90-ud-dev_autoparsed.conllu". Locate these files under **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**
     
-    - post_processors = [] 
+#### Preprocess Unlabeled Data
 
-Step 4- In /mount/projekte/codeswitch/betul/steps_parser_2/steps_parser/ :
+Navigate to **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**
 
-Run
+Run the corresponding Python script for the auxiliary task you want to use. E.g., for the LIH task:
 
-    - python src/train.py ../dcst_simplified_morp_feats_of_head_social_parsedbykpv.json
+    - python dcst_langid_of_head.py qtd_trde90-ud-train_autoparsed.py qtd_trde90-ud-train_autoparsed_lih.py
+    - python dcst_langid_of_head.py qtd_trde90-ud-dev_autoparsed.py qtd_trde90-ud-dev_autoparsed_lih.py
     
+### Trained Models
+
+Download the trained models from the [Trained_Models_XLM-R folder](https://drive.google.com/drive/folders/12F4ieakslvFZtOAj4JOqRX3NOTLPLICs?usp=sharing). Locate parser_models under **XLM-R-based/dcst-parser-train/trained_models/** and auxiliary_task_models under **XLM-R-based/auxiliary-task-train/trained_models/**
+
+ --------------
+### Use the Trained Model to Parse QTD_SAGT:
+
+Let's say we want to use the +LIH model for Tr-De CS pair (QTD_SAGT).
+
+    - cd XLM-R-based/dcst-parser-train/
+   
+    - python src/train.py ../deps_lih_qtd.json
     
-*For experimenting with other tasks:*
-
-  - Use:
-  
-     - dcst_number_of_children_social_parsedbykpv.json for (+NOC),
-     - dcst_distance_to_root_social_parsedbykpv.json for (+DTR),
-     - dcst_relative_pos_tag_social_parsedbykpv.json for (+RPE),
-     - dcst_head_lang_id_social_parsedbykpv.json for (+HLI),
-     - dcst_punct_count_social_parsedbykpv.json for (+PC),
-     
-    instead of dcst_simplified_morp_feats_of_head_social_parsedbykpv.json
-    
-Step 5- Undo step 3.
-
-##### 2.4- Train the final ensemble model (+SMH):
-
-Step 1- Open 'train.py' in /mount/projekte/codeswitch/betul/steps_gating_oneseq/steps_parser/src/
-
-Step 2- Uncomment the corresponding seq_trainer.resume_checkpoint command. E.g., it is line 101 for SMH task of Komi_Zyrian.
-
-Step 3- In /mount/projekte/codeswitch/betul/steps_gating_oneseq/steps_parser/ :
-
-Run
-
-    - python src/train.py ../deps_smh_kpv.json
-    
-------------------------------
-
-
-
