@@ -128,7 +128,7 @@ Download the trained models from the [Trained_Models_XLM-R folder](https://drive
 
 Let's say we want to use the +LIH model for Tr-De CS pair (QTD_SAGT).
 
-    - cd XLM-R-based/dcst-parser-train/
+    - cd XLM-R-based/dcst-parser-train/steps_parser/
    
     - python src/train.py ../deps_lih_qtd.json
     
