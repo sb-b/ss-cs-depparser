@@ -1,0 +1,196 @@
+{
+    "experiment": "qtd_sagt_2.8_gating_with_trde90_unlabeled",
+    "name": "deps_and_lih_batchsize_16_es_100",
+    "n_gpu": 1,
+
+    "model": {
+        "type": "MultiParser",
+        "args": {
+            "embeddings_processor": {
+                "type": "XLMRobertaWrapper",
+                "args": {
+                    "model_path": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/dcst-parser-train/pretrained_model/xlm-roberta-base",
+                    "fine_tune": true,
+                    "hidden_dropout": 0.2,
+                    "attn_dropout": 0.2,
+                    "output_dropout": 0.5,
+                    "scalar_mix_layer_dropout": 0.1,
+                    "token_mask_prob": 0.15
+                }
+            },
+            "outputs": {
+               "heads": {
+                    "type": "ArcScorer",
+                    "args": {
+                        "scorer_class": "DeepBiaffineScorer",
+                        "head_mode": "single_head",
+                        "hidden_size": 1024,
+                        "dropout": 0.33,
+                        "vocab": {
+                            "type": "IntegerVocab"
+                        }
+                    }
+                },
+                "labels": {
+                    "type": "DependencyClassifier",
+                    "args": {
+                        "scorer_class": "DeepBiaffineScorer",
+                        "hidden_size": 256,
+                        "dropout": 0.33,
+                        "vocab": {
+                            "type": "BasicVocab",
+                            "args": {
+                                "vocab_filename": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/dcst-parser-train/qtd_labels.vocab"
+                            }
+                        }
+                    }
+                }
+            },
+
+            "post_processors": [
+                {
+                    "type": "FactorizedMSTPostProcessor",
+                    "args": {
+                        "annotation_ids": [
+                            "heads",
+                            "labels"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+
+    "seq_model": {
+        "type": "MultiParser",
+        "args": {
+            "embeddings_processor": {
+                "type": "XLMRobertaWrapper",
+                "args": {
+                    "model_path": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/dcst-parser-train/pretrained_model/xlm-roberta-base",
+                    "fine_tune": true,
+                    "hidden_dropout": 0.2,
+                    "attn_dropout": 0.2,
+                    "output_dropout": 0.5,
+                    "scalar_mix_layer_dropout": 0.1,
+                    "token_mask_prob": 0.15
+                }
+            },
+            "outputs": {
+                "noc": {
+                    "type": "SequenceTagger",
+                    "args": {
+                        "hidden_size": 0,
+                        "input_dropout": 0.2,
+                        "vocab": {
+                            "type": "BasicVocab",
+                            "args": {
+                                "vocab_filename": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/auxiliary-task-train/trde90_lid_labels.vocab"
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    },
+
+    "data_loaders": {
+        "type": "BucketedCONLLLoader",
+
+        "args": {
+            "annotation_layers": {
+                "heads": {
+                    "type": "TagSequence",
+                    "source_column": 6,
+                    "args": {
+                        "ignore_root": true
+                    }
+                },
+                "labels": {
+                    "type": "DependencyMatrix",
+                    "source_column": [6,7],
+                    "args": {
+                        "ignore_non_relations": true
+                    }
+                }
+            },
+
+            "batch_size": 16,
+            "bucket_size": 512,
+            "max_tokens_per_batch": 156800,
+            "num_workers": 2
+        },
+        "paths": {
+            "train": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/LSTM-based/DCST/data/datasets/UD_QTD-SAGT/qtd_sagt-ud-train.conllu",
+            "dev": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/LSTM-based/DCST/data/datasets/UD_QTD-SAGT/qtd_sagt-ud-dev.conllu",
+            "test": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/LSTM-based/DCST/data/datasets/UD_QTD-SAGT/qtd_sagt-ud-test.conllu"
+        }
+    },
+
+    "seq_data_loaders": {
+        "type": "BucketedCONLLLoader",
+
+        "args": {
+            "annotation_layers": {
+                "noc": {
+                    "type": "TagSequence",
+                    "source_column": 4,
+                    "args": {
+                        "ignore_root": true
+                    }
+                }
+            },
+
+            "batch_size": 16,
+            "bucket_size": 512,
+            "max_tokens_per_batch": 156800,
+            "num_workers": 2
+        },
+        "paths": {
+            "train": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/LSTM-based/DCST/data/datasets/UD_QTD-SAGT/qtd_sagt-ud-train.conllu",
+            "dev": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/LSTM-based/DCST/data/datasets/UD_QTD-SAGT/qtd_sagt-ud-dev.conllu",
+            "test": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/LSTM-based/DCST/data/datasets/UD_QTD-SAGT/qtd_sagt-ud-test.conllu"
+        }
+    },
+
+    "trainer": {
+        "min_epochs": 15,
+        "max_epochs": 300,
+        "early_stop": 100,
+
+        "save_dir": "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/dcst-parser-train/trained_models/",
+        "save_period": 301,
+        "verbosity": 2,
+
+        "validation_criterion": {
+            "metrics": {
+                "heads": "fscore",
+                "labels": "fscore"
+            },
+            "weighting": "multiplicative"
+        },
+
+        "optimizer": {
+            "type": "AdamW",
+            "args": {
+                "lr": 4e-5,
+                "weight_decay": 0.0
+            }
+        },
+
+        "lr_scheduler": {
+            "type": "LambdaLR",
+            "args": {
+                "lr_lambda": "SqrtSchedule(400)"
+            }
+        },
+
+        "loss": {
+            "type": "CrossEntropyLoss",
+            "args": {
+                "ignore_index": -1
+            }
+        }
+    }
+}
