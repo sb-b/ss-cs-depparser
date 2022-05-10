@@ -84,7 +84,7 @@ If you want to join only one seq_labeler model (e.g., only +NOC model), set --nu
 ****************************************************************
 ----------------------------------------------------------------
 
-## ## How-To-Run the XLM-R-based Parser:
+## How-To-Run the XLM-R-based Parser:
 
 ### Requirements
 
