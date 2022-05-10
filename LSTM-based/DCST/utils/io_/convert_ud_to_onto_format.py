@@ -2,12 +2,9 @@ import argparse
 import os
 
 def write_ud_files(args):
-    languages_for_low_resource = [] # ['cu', 'da', 'fa', 'id', 'lv', 'sl', 'sv', 'ur', 'vi']
-    languages_for_domain_adpatation = ['qtd','qtd_sagt','qtd_trde90', 'lid', 'lid_sagt', 'lid_trde90', 'tr', 'tr_imst', 'tr_boun','de','de_gsd','de_hdt','sttr','stde','stqtd','stqtd_sagt','stqtd_sagt2','stde_gsd','sttr_imst','kpv','kpv_zyrian','kpv_social','stkpv','stkpv_zyrian','hien','hien_cs','hien_250cs','hien_500cs','hien_750cs','hien_1000cs','hien_1250cs','hien_lince','sthien','sthien_cs','sthien_real','sthien_1250real','dqfnn','dqfnn_fame','dqfnn_500fame','dqfnn_1000fame','dqfnn_2000fame','dqfnn_3000fame','dqfnn_4000fame','dqfnn_5000fame','dqfnn_6000fame','dqfnn_7000fame','dqfnn_8000fame','dqfnn_9000fame','dqfnn_10000fame','dqfnn_11000fame','dqfnn_unl','stdqfnn','stdqfnn_fame','stdqfnn_fame3']
-    #             'gl', 'gl_ctg', 'gl_treegal',
-    #             'it', 'it_isdt', 'it_postwita',
-    #             'ro', 'ro_nonstandard', 'ro_rrt',
-    #             'sv', 'sv_lines', 'sv_talbanken']
+    languages_for_low_resource = [] 
+    languages_for_domain_adpatation = ['qtd','qtd_sagt','qtd_trde90','kpv','kpv_zyrian','hien','hien_cs','hien_lince','qfn','qfn_fame','qfn_unl']
+
     languages = sorted(list(set(languages_for_low_resource + languages_for_domain_adpatation)))
     splits = ['train', 'dev', 'test']
     lng_to_files = dict((language, {}) for language in languages)
