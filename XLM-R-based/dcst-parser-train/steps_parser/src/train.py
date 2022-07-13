@@ -64,8 +64,9 @@ def main(config, eval_mode="basic"): #mycode
     del model
 
 #QTD_SAGT
-
     seq_trainer._resume_checkpoint("/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/auxiliary-task-train/trained_models/dcst_head_lang_id_trde90_parsedbyqtd/seq_labelling/1207_110423/model_best.pth")
+#TR_IMST
+#    seq_trainer._resume_checkpoint("/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/auxiliary-task-train/trained_models/dcst_head_simplified_morp_feats_2_boun/seq_labelling/0901_184334/model_best.pth")
 
 
     trainer.parser.seq_embed = seq_trainer.parser.embed
@@ -100,6 +101,8 @@ def evaluate_best_trained_model(trainer, config, eval_mode="basic"):
         eval_mode: Method to use in evaluation: "basic" for basic UD, "enhanced" for enhanced UD. Default: "basic".
     """
     checkpoint_path = "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/dcst-parser-train/trained_models/qtd_sagt_2.8_gating_with_trde90_unlabeled/deps_and_hli_batchsize_16_es_100/1207_125541/model_best.pth"
+    #for TR_IMST, uncomment the following line:
+    #checkpoint_path = "/mount/projekte18/codeswitch/betul/ss-cs-depparser/XLM-R-based/dcst-parser-train/trained_models/deps_and_smh_batchsize_8_earlystop_200/0907_100402/model_best.pth"
     #checkpoint_path = Path(trainer.checkpoint_dir) / "model_best.pth"
     trainer._resume_checkpoint(checkpoint_path)
 
