@@ -103,16 +103,16 @@ Download XLM-R base model from [Hugging Face](https://huggingface.co/xlm-roberta
 
 --------------------------------------------------
 --------------------------------------------------
-### 2.1 Example Run using the Trained Models on Turkish-German code-switching (QTD_SAGT) Treebank:
+### 2.1. Example Run using the Trained Models on Turkish-German code-switching (QTD_SAGT) Treebank:
 
-#### Datasets
+#### 2.1.1. Datasets
 
 - For labeled data, we use the QTD_SAGT dataset from [Universal Dependencies](https://github.com/UniversalDependencies): 
     - Download QTD_SAGT treebank and locate it under **LSTM-based/DCST/data/datasets/**
 - For unlabeled data, we use ["TuGeBiC"](https://github.com/ozlemcek/TuGeBiC). 
     - Download the corpus, join all conll-u files and divide them to train and dev files. Name the training as "qtd_trde90-ud-train_autoparsed.conllu" and dev as "qtd_trde90-ud-dev_autoparsed.conllu". Locate these files under **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**
     
-#### Preprocess Unlabeled Data
+#### 2.1.2. Preprocess Unlabeled Data
 
 Navigate to **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**
 
@@ -121,12 +121,12 @@ Run the corresponding Python script for the auxiliary task you want to use. E.g.
     - python dcst_langid_of_head.py qtd_trde90-ud-train_autoparsed.py qtd_trde90-ud-train_autoparsed_lih.py
     - python dcst_langid_of_head.py qtd_trde90-ud-dev_autoparsed.py qtd_trde90-ud-dev_autoparsed_lih.py
     
-#### Trained Models
+#### 2.1.3. Trained Models
 
 Download the trained models from the [Trained_Models_XLM-R folder](https://drive.google.com/drive/folders/12F4ieakslvFZtOAj4JOqRX3NOTLPLICs?usp=sharing). Locate parser_models under **XLM-R-based/dcst-parser-train/trained_models/** and auxiliary_task_models under **XLM-R-based/auxiliary-task-train/trained_models/**
 
  --------------
-#### Use the Trained Model to Parse QTD_SAGT:
+#### 2.1.4. Use the Trained Model to Parse QTD_SAGT:
 
 Let's say we want to use the +LIH model for Tr-De CS pair (QTD_SAGT).
 
@@ -140,19 +140,18 @@ Let's say we want to use the +LIH model for Tr-De CS pair (QTD_SAGT).
 
 Here, we show how to run the XLM-R-based model trained with the SMH (simplified morphology of head) task on the TR_IMST Treebank. 
 
-#### Datasets:
+#### 2.2.1. Datasets:
     - Download TR_IMST Treebank from Universal Dependencies and locate it under **LSTM-based/DCST/data/datasets/**
     - For unlabeled data, we use TR_BOUN Treebank. Download TR_BOUN Treebank from Universal Dependencies and locate it under **LSTM-based/DCST/data/datasets/**
  
  
-(NOTE: You can skip the following two steps if you use the TR_BOUN Treebank as the unlabeled data. To ease the process, we have already put the pseudo-labeled data under 
-**XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/** (as tr_boun-ud-train-parsedbyimst-smh.conllu, tr_boun-ud-dev-parsedbyimst-smh.conllu, and tr_boun-ud-test-parsedbyimst-smh.conllu))
+#### (NOTE: You can skip the following two steps (2.2.2. and 2.2.3.) if you use the TR_BOUN Treebank as the unlabeled data. To ease the process, we have already put the pseudo-labeled data under **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/** (as tr_boun-ud-train-parsedbyimst-smh.conllu, tr_boun-ud-dev-parsedbyimst-smh.conllu, and tr_boun-ud-test-parsedbyimst-smh.conllu))
 
-#### Pseudo-label the Unlabeled Data with the Base Parser:
+#### 2.2.2. Pseudo-label the Unlabeled Data with the Base Parser:
 
 Since the annotations of the TR_BOUN Treebank are gold annotations, we need to re-label them automatically for our purposes. You can train the [base parser](https://github.com/boschresearch/steps-parser) and parse the treebank using this trained model and save the train, dev, and test file as "tr_boun-ud-train_autoparsed.conllu", "tr_boun-ud-dev_autoparsed.conllu", "tr_boun-ud-test_autoparsed.conllu". Locate these files under  **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**.
 
-#### Preprocess Unlabeled Data
+#### 2.2.3. Preprocess Unlabeled Data
 
 Navigate to **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**
 
@@ -161,12 +160,12 @@ Run the corresponding Python script for the auxiliary task you want to use. E.g.
     - python dcst_simplified_morp_of_head.py tr_boun-ud-train_autoparsed.py tr_boun-ud-train-parsedbyimst-smh.py
     - python dcst_simplified_morp_of_head.py tr_boun-ud-dev_autoparsed.py tr_boun-ud-dev-parsedbyimst-smh.py
 
-#### Trained Models
+#### 2.2.4. Trained Models
 
 Download the trained models from the [Trained_Models_XLM-R folder](https://drive.google.com/drive/folders/12F4ieakslvFZtOAj4JOqRX3NOTLPLICs?usp=sharing). Locate parser_models under **XLM-R-based/dcst-parser-train/trained_models/** and auxiliary_task_models under **XLM-R-based/auxiliary-task-train/trained_models/**
 
  --------------
-#### Use the Trained Model to Parse TR_IMST:
+#### 2.2.5. Use the Trained Model to Parse TR_IMST:
 
 We will use the +SMH model for parsing of TR_IMST dataset.
 
