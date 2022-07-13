@@ -132,3 +132,42 @@ Let's say we want to use the +LIH model for Tr-De CS pair (QTD_SAGT).
    
     - python src/train.py ../deps_lih_qtd.json
     
+--------------------------------------------------
+--------------------------------------------------
+### Another Example Run using the Trained Models on Turkish IMST Treebank:
+
+Here, we show how to run the XLM-R-based model trained with the SMH (simplified morphology of head) task on the TR_IMST Treebank. 
+
+#### Datasets:
+    - Download TR_IMST Treebank from Universal Dependencies and locate it under **LSTM-based/DCST/data/datasets/**
+    - For unlabeled data, we use TR_BOUN Treebank. Download TR_BOUN Treebank from Universal Dependencies and locate it under **LSTM-based/DCST/data/datasets/**
+ 
+ 
+(NOTE: You can skip the following two steps if you use the TR_BOUN Treebank as the unlabeled data. To ease the process, we have already put the pseudo-labeled data under 
+**XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/** (as tr_boun-ud-train-parsedbyimst-smh.conllu, tr_boun-ud-dev-parsedbyimst-smh.conllu, and tr_boun-ud-test-parsedbyimst-smh.conllu))
+
+#### Pseudo-label the Unlabeled Data with the Base Parser:
+
+Since the annotations of the TR_BOUN Treebank are gold annotations, we need to re-label them automatically for our purposes. You can train the [base parser](https://github.com/boschresearch/steps-parser) and parse the treebank using this trained model and save the train, dev, and test file as "tr_boun-ud-train_autoparsed.conllu", "tr_boun-ud-dev_autoparsed.conllu", "tr_boun-ud-test_autoparsed.conllu". Locate these files under  **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**.
+
+#### Preprocess Unlabeled Data
+
+Navigate to **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**
+
+Run the corresponding Python script for the auxiliary task you want to use. E.g., for the SMH task:
+
+    - python dcst_simplified_morp_of_head.py tr_boun-ud-train_autoparsed.py tr_boun-ud-train-parsedbyimst-smh.py
+    - python dcst_simplified_morp_of_head.py tr_boun-ud-dev_autoparsed.py tr_boun-ud-dev-parsedbyimst-smh.py
+
+### Trained Models
+
+Download the trained models from the [Trained_Models_XLM-R folder](https://drive.google.com/drive/folders/12F4ieakslvFZtOAj4JOqRX3NOTLPLICs?usp=sharing). Locate parser_models under **XLM-R-based/dcst-parser-train/trained_models/** and auxiliary_task_models under **XLM-R-based/auxiliary-task-train/trained_models/**
+
+ --------------
+### Use the Trained Model to Parse TR_IMST:
+
+We will use the +SMH model for parsing of TR_IMST dataset.
+
+    - cd XLM-R-based/dcst-parser-train/steps_parser/
+   
+    - python src/train.py ../deps_smh_imst.json
