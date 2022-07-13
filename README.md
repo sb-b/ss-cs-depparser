@@ -145,11 +145,11 @@ Here, we show how to run the XLM-R-based model trained with the SMH (simplified 
     - For unlabeled data, we use TR_BOUN Treebank. Download TR_BOUN Treebank from Universal Dependencies and locate it under **LSTM-based/DCST/data/datasets/**
  
  
-#### (NOTE: You can skip the following two steps (2.2.2. and 2.2.3.) if you use the TR_BOUN Treebank as the unlabeled data. To ease the process, we have already put the pseudo-labeled data under **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/** (as tr_boun-ud-train-parsedbyimst-smh.conllu, tr_boun-ud-dev-parsedbyimst-smh.conllu, and tr_boun-ud-test-parsedbyimst-smh.conllu))
+#### (NOTE: You can skip the following two steps (2.2.2. and 2.2.3.) if you use the TR_BOUN Treebank as the unlabeled data. To ease the process, we have already put the pseudo-labeled data under **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/** (as *tr_boun-ud-train-parsedbyimst-smh.conllu* and *tr_boun-ud-dev-parsedbyimst-smh.conllu*))
 
 #### 2.2.2. Pseudo-label the Unlabeled Data with the Base Parser:
 
-Since the annotations of the TR_BOUN Treebank are gold annotations, we need to re-label them automatically for our purposes. You can train the [base parser](https://github.com/boschresearch/steps-parser) and parse the treebank using this trained model and save the train, dev, and test file as "tr_boun-ud-train_autoparsed.conllu", "tr_boun-ud-dev_autoparsed.conllu", "tr_boun-ud-test_autoparsed.conllu". Locate these files under  **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**.
+Since the annotations of the TR_BOUN Treebank are gold annotations, we need to re-label them automatically for our purposes. You can train the [base parser](https://github.com/boschresearch/steps-parser) and parse the treebank using this trained model and save the train and dev files as "tr_boun-ud-train_autoparsed.conllu" and "tr_boun-ud-dev_autoparsed.conllu". Locate these files under  **XLM-R-based/auxiliary-task-train/preprocessed_unlabeled_data/**.
 
 #### 2.2.3. Preprocess Unlabeled Data
 
